@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// Bloc flutter package import
+
+import 'package:meals_app/cubit/favorite_meals_cubit.dart';
 import 'package:meals_app/screens/tabs.dart';
 
 final theme = ThemeData(
@@ -18,7 +22,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Meals App', theme: theme, home: const TabScreen());
+    // Bloc provider added
+    return BlocProvider(
+      create: (context) => FavoriteMealsCubit(),
+      child: MaterialApp(
+          title: 'Meals App', theme: theme, home: const TabScreen()),
+    );
   }
 }

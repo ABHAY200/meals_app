@@ -1,14 +1,12 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter/material.dart';
+import 'package:meals_app/cubit/favorite_meals_cubit.dart';
 import 'package:meals_app/models/meals.dart';
 
 class MealsDetails extends StatelessWidget {
-  const MealsDetails(
-      {super.key,
-      required this.title,
-      required this.meal,
-      required this.onToggleFavorites});
+  const MealsDetails({super.key, required this.title, required this.meal});
 
-  final void Function(Meal meal) onToggleFavorites;
   final String title;
   final Meal meal;
 
@@ -20,7 +18,9 @@ class MealsDetails extends StatelessWidget {
           actions: [
             IconButton(
                 onPressed: () {
-                  onToggleFavorites(meal);
+                  // bloc state update function
+                  BlocProvider.of<FavoriteMealsCubit>(context)
+                      .onToggleFavoriteMeal(meal);
                 },
                 icon: const Icon(Icons.star))
           ],

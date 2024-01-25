@@ -5,14 +5,13 @@ import 'package:meals_app/models/meals.dart';
 import 'package:meals_app/screens/mealsDetails.dart';
 
 class Meals extends StatelessWidget {
-  const Meals(
-      {super.key,
-      required this.title,
-      required this.meals,
-      required this.onToggleFavorites});
+  const Meals({
+    super.key,
+    required this.title,
+    required this.meals,
+  });
   final List<Meal> meals;
   final String title;
-  final void Function(Meal meal) onToggleFavorites;
 
   void onTapMenuItem(BuildContext context, Meal mealsItem) {
     Navigator.of(context).pop();
@@ -20,7 +19,6 @@ class Meals extends StatelessWidget {
         builder: (ctx) => MealsDetails(
               title: mealsItem.title,
               meal: mealsItem,
-              onToggleFavorites: onToggleFavorites,
             )));
   }
 

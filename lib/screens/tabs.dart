@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/components/mainDrawer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:meals_app/cubit/favorite_meals_cubit.dart';
 import 'package:meals_app/screens/categories.dart';
 import 'package:meals_app/screens/meals.dart';
-
-import '../models/meals.dart';
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -16,25 +17,6 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> {
   int _selectPageIndex = 0;
-  final List<Meal> _favoriteMeals = [];
-
-  void _showInfoMessage(String snackBarMessage) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(snackBarMessage)));
-  }
-
-  void _toggleFavoriteMealStatus(meal) {
-    final isExisting = _favoriteMeals.contains(meal);
-
-    if (isExisting) {
-      _favoriteMeals.remove(meal);
-      _showInfoMessage('Meal is no longer in favorites');
-    } else {
-      _favoriteMeals.add(meal);
-      _showInfoMessage('Meal added to favorites');
-    }
-  }
 
   void _selectedPage(index) {
     setState(() {
@@ -42,30 +24,42 @@ class _TabScreenState extends State<TabScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Widget activePage =
-        CategoriesScreen(onToggleFavorites: _toggleFavoriteMealStatus);
-    var activePageTitle = "Categories";
-
+  Widget getActivePage(favoriteMealsList) {
+    Widget activePage = const CategoriesScreen();
     if (_selectPageIndex == 1) {
-      activePage = Meals(
-          title: 'Favorites',
-          meals: _favoriteMeals,
-          onToggleFavorites: _toggleFavoriteMealStatus);
+      activePage = Meals(title: 'Favorites', meals: favoriteMealsList);
+    } else {
+      activePage = const CategoriesScreen();
+    }
+    return activePage;
+  }
+
+  String getActivePageTitle() {
+    var activePageTitle = "Categories";
+    if (_selectPageIndex == 1) {
       activePageTitle = "Favorites";
     } else {
-      activePage =
-          CategoriesScreen(onToggleFavorites: _toggleFavoriteMealStatus);
       activePageTitle = "Categories";
     }
+    return activePageTitle;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // imported bloc pointed to a new variable
+    final favoriteMealsCubit = BlocProvider.of<FavoriteMealsCubit>(context);
 
     return (Scaffold(
       appBar: AppBar(
-        title: Text(activePageTitle),
+        title: Text(getActivePageTitle()),
       ),
       drawer: const MainDrawer(),
-      body: activePage,
+      body: BlocBuilder(
+        bloc: favoriteMealsCubit,
+        builder: (context, favoriteMealsList) {
+          return getActivePage(favoriteMealsList);
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (index) {
             _selectedPage(index);
